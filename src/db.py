@@ -2,6 +2,7 @@ import json
 import os
 
 import motor.motor_asyncio
+from bson import ObjectId
 
 from src.utils import setup_logger
 
@@ -35,3 +36,32 @@ async def export_data(info):
 
     with open(info[0], "w", encoding="utf-8") as file:
         json.dump(documents, file, ensure_ascii=False, indent=4)
+
+
+async def get_response(user_id: int):
+    collection = db[COLLECTION_NAME]
+
+    query = {
+        "$expr": {"$lt": [{"$add": [{"$size": "$good"}, {"$size": "$bad"}]}, 3]},
+        "good": {"$nin": [user_id]},
+        "bad": {"$nin": [user_id]},
+    }
+
+    document = await collection.find_one(query)
+    return document
+
+
+async def update_response(doc_id: str, user_id: int, type: str):
+    collection = db[COLLECTION_NAME]
+
+    try:
+        res = await collection.update_one(
+            {"_id": ObjectId(doc_id)},
+            {"$addToSet": {type: user_id}},
+        )
+        if res.modified_count != 1:
+            logger.warning(
+                f"Modified count = {res.modified_count}! Check out id = {doc_id}"
+            )
+    except Exception as e:
+        logger.critical(f"Error updating document: {e}")
