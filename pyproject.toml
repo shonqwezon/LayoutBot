@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "layoutbot"
+version = "0.1.0"
+description = "Tg bot for layouting dataset"
+authors = ["Shon Qwezon <shonzbso@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiogram = "^3.18.0"
+pymongo = "^4.11.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
