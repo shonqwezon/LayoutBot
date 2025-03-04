@@ -21,6 +21,9 @@ def setup_logger(logger_name):
     logger.setLevel(logging.DEBUG)
 
     # Aiogram
+    logging.getLogger("pymongo").setLevel(logging.INFO)
+
+    # Aiogram
     logging.getLogger("aiogram").setLevel(logging.INFO)
 
     # Asyncio
