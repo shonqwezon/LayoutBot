@@ -33,9 +33,13 @@ async def download(message: Message, state: FSMContext):
 
     media_group = []
     for mode in Modes:
-        await export_data(mode.value)
-        media_group.append(InputMediaDocument(media=FSInputFile(mode.value[0])))
+        for type in ["val", "train"]:
+            await export_data(mode.value, type)
+            media_group.append(
+                InputMediaDocument(media=FSInputFile(type + "_" + mode.value[0]))
+            )
     await message.bot.send_media_group(chat_id=message.from_user.id, media=media_group)
 
     for mode in Modes:
-        os.remove(mode.value[0])
+        for type in ["val", "train"]:
+            os.remove(type + "_" + mode.value[0])

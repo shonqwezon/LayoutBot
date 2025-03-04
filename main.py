@@ -12,8 +12,8 @@ logger = setup_logger(__name__)
 
 
 async def create_db():
-    await init_db("data/val_set_clarify.json", drop=True)
-    await init_db("data/train_set_clarify.json", drop=False)
+    await init_db("data/val_set_clarify.json", "val", drop=True)
+    await init_db("data/train_set_clarify.json", "train", drop=False)
 
 
 async def main():

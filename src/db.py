@@ -13,28 +13,28 @@ db = motor.motor_asyncio.AsyncIOMotorClient(DB_URL)[os.getenv("MONGO_DB_NAME")]
 logger = setup_logger(__name__)
 
 
-async def init_db(filepath: str, drop=False):
+async def init_db(filepath: str, type: str, drop=False):
     if drop:
         await db[COLLECTION_NAME].drop()
     collection = db[COLLECTION_NAME]
     with open(filepath, "r", encoding="utf-8") as file:
         data = json.load(file)
     for body in data:
-        query = {"body": body, "good": [], "bad": []}
+        query = {"body": body, "good": [], "bad": [], "type": type}
         await collection.insert_one(query)
 
 
-async def export_data(info):
+async def export_data(info, type):
     if info[1] not in ["$gt", "$lt", "$eq"]:
         raise ValueError("Invalid operator. Use '$gt', '$lt', or '$eq'.")
 
     collection = db[COLLECTION_NAME]
-    query = {"$expr": {info[1]: [{"$size": "$good"}, {"$size": "$bad"}]}}
+    query = {"$expr": {info[1]: [{"$size": "$good"}, {"$size": "$bad"}]}, "type": type}
     documents = []
     async for document in collection.find(query):
         documents.append(document.get("body"))
 
-    with open(info[0], "w", encoding="utf-8") as file:
+    with open(type + "_" + info[0], "w", encoding="utf-8") as file:
         json.dump(documents, file, ensure_ascii=False, indent=4)
 
 
