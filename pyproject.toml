@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 aiogram = "^3.18.0"
 pymongo = "^4.11.2"
+motor = "^3.7.0"
 
 
 [build-system]
