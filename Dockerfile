@@ -1,4 +1,4 @@
-FROM python:3.12.9-alpine3.21
+FROM python:3.12.9-alpine3.21 AS base
 
 
 # Basic env vars
