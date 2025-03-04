@@ -52,6 +52,9 @@ async def get_task(event: TelegramObject, state: FSMContext):
         message = event.message
     elif isinstance(event, Message):
         message = event
+    if not doc:
+        await message.answer(msg.GAME_OVER)
+        return
     await message.answer(
         msg.ARENA.format(
             question=doc["body"][BodyField.QUESTION],

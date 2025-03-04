@@ -41,14 +41,30 @@ async def export_data(info, type):
 async def get_response(user_id: int):
     collection = db[COLLECTION_NAME]
 
-    query = {
-        "$expr": {"$lt": [{"$add": [{"$size": "$good"}, {"$size": "$bad"}]}, 3]},
-        "good": {"$nin": [user_id]},
-        "bad": {"$nin": [user_id]},
-    }
+    pipeline = [
+        {
+            "$match": {
+                "$expr": {
+                    "$lt": [
+                        {"$add": [{"$size": "$good"}, {"$size": "$bad"}]},
+                        3,
+                    ]  # Sum of sizes < 3
+                },
+                "good": {"$nin": [user_id]},  # user_id not in 'good' array
+                "bad": {"$nin": [user_id]},  # user_id not in 'bad' array
+            }
+        },
+        {
+            "$sample": {"size": 1}  # Randomly select 1 document
+        },
+    ]
 
-    document = await collection.find_one(query)
-    return document
+    result = await collection.aggregate(pipeline).to_list(length=1)
+
+    if result:
+        return result[0]
+    else:
+        return None
 
 
 async def update_response(doc_id: str, user_id: int, type: str):
