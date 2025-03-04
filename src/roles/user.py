@@ -4,7 +4,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, TelegramObject
 
 import src.messages as msg
-from src.db import get_response, update_response
+from src.db import (
+    get_handled_docs_len,
+    get_response,
+    get_total_docs_len,
+    update_response,
+)
 from src.keyboards import get_gb_kb, ownerKb
 from src.utils import is_owner, setup_logger
 
@@ -53,4 +58,14 @@ async def get_task(event: TelegramObject, state: FSMContext):
             answer=doc["body"][BodyField.ANSWER],
         ),
         reply_markup=get_gb_kb(doc["_id"]),
+    )
+
+
+@user.message(Command("status"))
+async def get_status(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        msg.STATUS.format(
+            now=await get_handled_docs_len(), total=await get_total_docs_len()
+        )
     )

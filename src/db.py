@@ -65,3 +65,25 @@ async def update_response(doc_id: str, user_id: int, type: str):
             )
     except Exception as e:
         logger.critical(f"Error updating document: {e}")
+
+
+async def get_total_docs_len():
+    collection = db[COLLECTION_NAME]
+    try:
+        total_count = await collection.count_documents({})
+        return total_count
+    except Exception as e:
+        logger.critical(f"Error counting documents: {e}")
+        return None
+
+
+async def get_handled_docs_len():
+    collection = db[COLLECTION_NAME]
+    try:
+        count = await collection.count_documents(
+            {"$expr": {"$gte": [{"$add": [{"$size": "$good"}, {"$size": "$bad"}]}, 3]}}
+        )
+        return count
+    except Exception as e:
+        logger.critical(f"Error counting documents: {e}")
+        return None
