@@ -9,8 +9,6 @@ services:
         - ~/bot_cfg/.env
       volumes:
         - mongodb_data:/data/db
-      networks:
-        - bot_net_default
 
   bot:
     build:
@@ -18,15 +16,9 @@ services:
     container_name: my_bot
     env_file:
       - ~/bot_cfg/.env
-    networks:
-      - bot_net_default
     restart: unless-stopped
     depends_on:
       - mongodb
-
-networks:
-  bot_net_default:
-    driver: bridge
 
 volumes:
   mongodb_data:
