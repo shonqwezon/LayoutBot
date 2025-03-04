@@ -13,4 +13,4 @@ user = Router()
 @user.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
-    message.answer(msg.START)
+    await message.answer(msg.START)

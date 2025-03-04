@@ -12,4 +12,4 @@ owner = Router()
 @owner.message(F.data == "Выгрузить")
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
-    message.answer("OK")
+    await message.answer("OK")

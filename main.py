@@ -18,7 +18,7 @@ async def main():
         token=os.getenv("TOKEN_BOT"),
         default=DefaultBotProperties(parse_mode="html"),
     )
-
+    await test_mongo()
     logger.info("Старт бота")
     await dp.start_polling(bot)
 
