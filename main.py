@@ -17,8 +17,8 @@ async def create_db():
 
 
 async def main():
-    await create_db()
-    return
+    # await create_db()
+    # return
     dp = Dispatcher()
     dp.include_routers(owner, user)
 

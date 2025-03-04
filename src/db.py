@@ -21,3 +21,17 @@ async def init_db(filepath: str, drop=False):
     for body in data:
         query = {"body": body, "good": [], "bad": []}
         await collection.insert_one(query)
+
+
+async def export_data(info):
+    if info[1] not in ["$gt", "$lt", "$eq"]:
+        raise ValueError("Invalid operator. Use '$gt', '$lt', or '$eq'.")
+
+    collection = db[COLLECTION_NAME]
+    query = {"$expr": {info[1]: [{"$size": "$good"}, {"$size": "$bad"}]}}
+    documents = []
+    async for document in collection.find(query):
+        documents.append(document.get("body"))
+
+    with open(info[0], "w", encoding="utf-8") as file:
+        json.dump(documents, file, ensure_ascii=False, indent=4)
